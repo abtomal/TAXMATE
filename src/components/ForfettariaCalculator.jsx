@@ -30,6 +30,8 @@ const ForfettariaCalculator = () => {
     '9': 62,
     '10': 67,
     '11': 78,
+    '12': 78,
+    '13': 67,
   };
 
   const aliquoteRegionaliInps = {
@@ -175,6 +177,9 @@ const ForfettariaCalculator = () => {
               <option value="9">Studi di ingegneria e architettura (62%)</option>
               <option value="10">Servizi di marketing e pubblicità (67%)</option>
               <option value="11">Manutenzione edifici e giardinaggio (78%)</option>
+              <option value="12">Altre attività dei disegnatori grafici (78%)</option>
+              <option value="13">Altre rappresentazioni artistiche (67%)</option>
+
             </select>
           </div>
 
