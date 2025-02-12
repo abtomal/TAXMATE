@@ -180,6 +180,26 @@ export const atecoData = [
     categoria: "Logistica",
     coefficiente: 67,
     note: "Logistica e distribuzione"
+  },
+  {
+    codice: "74.10.29",
+    descrizione: "Altre attività dei disegnatori grafici",
+    categoria: "Arte e Intrattenimento",
+    coefficiente: 78,
+    note: "Design, arte classica e arte digitale"
+  },
+  {
+    codice: "90.01.09",
+    descrizione: "Altre rappresentazioni artistiche",
+    categoria: "Arte e Intrattenimento",
+    coefficiente: 67,
+    note: "Altre attività relative all'ambito artistico"
+  },{
+    codice: "96.09.09",
+    descrizione: "Altri servizi per la persona nca.",
+    categoria: "Generico",
+    coefficiente: 67,
+    note: "Generico"
   }
 ];
 
