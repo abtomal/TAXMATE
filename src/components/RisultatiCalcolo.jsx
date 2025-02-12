@@ -21,15 +21,15 @@ const RisultatiCalcolo = ({ results, tipologiaInps }) => {
           <p className="text-sm text-gray-600">Contributi INPS</p>
           <p className="text-lg font-semibold">€ {results.contributiInps}</p>
         </div>
-        <div className="p-4 bg-gray-50 rounded">
+        <div className="p-4 bg-red-200 rounded">
           <p className="text-sm text-gray-600">Totale Costi</p>
           <p className="text-lg font-semibold">€ {results.totaleCosti}</p>
         </div>
-        <div className="p-4 bg-gray-50 rounded">
+        <div className="p-4 bg-yellow-200 rounded">
           <p className="text-sm text-gray-600">Tassazione Effettiva</p>
           <p className="text-lg font-semibold">{results.tassazioneEffettiva}%</p>
         </div>
-        <div className="p-4 bg-gray-50 rounded">
+        <div className="p-4 bg-blue-200 rounded">
           <p className="text-sm text-gray-600">Netto Stimato</p>
           <p className="text-lg font-semibold">€ {results.nettoStimato}</p>
         </div>
