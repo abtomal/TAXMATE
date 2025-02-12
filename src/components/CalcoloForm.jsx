@@ -82,7 +82,7 @@ const CalcoloForm = ({ formData, setFormData, onSubmit, errors }) => {
           <div className="relative">
             <input
               type="text"
-              placeholder="Cerca per codice, descrizione o categoria..."
+              placeholder="Cerca per descrizione, codice o categoria..."
               value={searchTerm}
               onChange={(e) => filterAteco(e.target.value)}
               onFocus={() => setIsDropdownOpen(true)}
