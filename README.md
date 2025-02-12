@@ -1,4 +1,4 @@
-# TAMXATE
+# TAXMATE
 
 ## Developed by Alessandro Ponton
 ## Idea by Matteo Roiatti
