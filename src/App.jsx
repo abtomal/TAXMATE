@@ -1,11 +1,17 @@
-import ForfettariaCalculator from './components/ForfettariaCalculator'
+// src/App.jsx
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
+import CalculatorPage from './pages/CalculatorPage';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100 py-8">
-      <ForfettariaCalculator />
-    </div>
-  )
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/calcola" element={<CalculatorPage />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
