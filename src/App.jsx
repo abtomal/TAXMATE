@@ -16,7 +16,7 @@ const Navbar = () => {
         <Link to="/" className="text-xl font-bold">Torna alla Home</Link>
         <div className="space-x-4">
           <Link to="/calcola" className="hover:text-blue-200">Calcola Contributi</Link>
-          <Link to="/fatture" className="hover:text-blue-200">Gestione Fatture</Link>
+          <Link to="/fatture" className="hover:text-blue-200">Gestisci Fatture</Link>
         </div>
       </div>
     </nav>
