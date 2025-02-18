@@ -11,7 +11,8 @@ const Footer = () => {
           <div>
             <h3 className="text-white text-lg font-semibold mb-4">Calcolatore Forfettario</h3>
             <p className="text-sm">
-              Strumento gratuito per il calcolo delle tasse e dei contributi nel regime forfettario.
+              Strumento per il calcolo delle tasse e dei contributi, gestione delle fatture e delle scadenze.<br></br>
+              Le fatture vengono memorizzate all'interno della memoria del tuo dispositivo.
             </p>
           </div>
 

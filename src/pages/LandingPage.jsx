@@ -32,16 +32,24 @@ const LandingPage = () => {
                 <svg className="w-6 h-6 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-lg">Ricerca facilitata codici ATECO</span>
+                <span className="text-lg">Gestione delle fatture</span>
               </div>
             </div>
 
-            <Link 
-              to="/calcola"
-              className="inline-block bg-white text-blue-600 px-8 py-4 rounded-lg text-xl font-semibold shadow-lg hover:bg-blue-50 transition-colors"
-            >
-              Inizia il Calcolo
-            </Link>
+            <div className="flex justify-center space-x-4">
+              <Link 
+                to="/calcola"
+                className="bg-white text-blue-600 px-8 py-4 rounded-lg text-xl font-semibold shadow-lg hover:bg-green-100 transition-colors"
+              >
+                Calcola Contributi
+              </Link>
+              <Link 
+                to="/fatture"
+                className="bg-blue-800 text-white px-8 py-4 rounded-lg text-xl font-semibold shadow-lg hover:bg-cyan-600 transition-colors"
+              >
+                Gestisci Fatture
+              </Link>
+            </div>
             
             <div className="mt-16 text-sm text-blue-200">
               <p>Dati aggiornati al 2025</p>
