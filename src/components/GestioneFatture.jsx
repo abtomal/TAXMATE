@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { atecoData } from '../data/ateco-forfettario.js';
+import ScadenzeFatture from './ScadenzeFatture';
+import FattureMensili from './FattureMensili';
+import { AlertCircle } from 'lucide-react';
 
 const GestioneFatture = () => {
   const [formData, setFormData] = useState({
@@ -8,7 +10,9 @@ const GestioneFatture = () => {
     codiceAteco: '',
     coefficienteRedditività: 0,
     descrizione: '',
-    dataEmissione: new Date().toISOString().split('T')[0]
+    dataEmissione: new Date().toISOString().split('T')[0],
+    dataScadenza: '',
+    pagata: false,
   });
 
   const [fattureSalvate, setFattureSalvate] = useState([]);
@@ -65,8 +69,21 @@ const GestioneFatture = () => {
       codiceAteco: '',
       coefficienteRedditività: 0,
       descrizione: '',
-      dataEmissione: new Date().toISOString().split('T')[0]
+      dataEmissione: new Date().toISOString().split('T')[0],
+      dataScadenza: '',
+      pagata: false
     });
+    setSearchTerm('');
+  };
+
+  const togglePagamento = (id) => {
+    const nuoveFatture = fattureSalvate.map(fattura => 
+      fattura.id === id 
+        ? {...fattura, pagata: !fattura.pagata}
+        : fattura
+    );
+    setFattureSalvate(nuoveFatture);
+    localStorage.setItem('fatture', JSON.stringify(nuoveFatture));
   };
 
   const rimuoviFattura = (id) => {
@@ -76,11 +93,24 @@ const GestioneFatture = () => {
   };
 
   const calcolaTotali = () => {
-    const totale = fattureSalvate.reduce((acc, fattura) => acc + parseFloat(fattura.fatturato), 0);
-    return {
-      totale,
-      numeroFatture: fattureSalvate.length
+    const totali = {
+      totale: 0,
+      numeroFatture: fattureSalvate.length,
+      daPagare: 0,
+      pagate: 0
     };
+
+    fattureSalvate.forEach(fattura => {
+      const importo = parseFloat(fattura.fatturato);
+      totali.totale += importo;
+      if (fattura.pagata) {
+        totali.pagate += importo;
+      } else {
+        totali.daPagare += importo;
+      }
+    });
+
+    return totali;
   };
 
   const totali = calcolaTotali();
@@ -90,6 +120,8 @@ const GestioneFatture = () => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Gestione Fatture</h1>
       </div>
+
+      <ScadenzeFatture fatture={fattureSalvate} />
 
       <form onSubmit={salvaFattura} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -114,6 +146,19 @@ const GestioneFatture = () => {
               type="date"
               value={formData.dataEmissione}
               onChange={(e) => setFormData({...formData, dataEmissione: e.target.value})}
+              className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Data Scadenza
+            </label>
+            <input
+              type="date"
+              value={formData.dataScadenza}
+              onChange={(e) => setFormData({...formData, dataScadenza: e.target.value})}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
               required
             />
@@ -202,7 +247,7 @@ const GestioneFatture = () => {
 
         <button
           type="submit"
-          disabled={!formData.fatturato || !formData.codiceAteco}
+          disabled={!formData.fatturato || !formData.codiceAteco || !formData.dataScadenza}
           className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors disabled:opacity-50"
         >
           Registra Fattura
@@ -213,7 +258,7 @@ const GestioneFatture = () => {
         <div className="mt-8">
           <div className="bg-gray-50 p-4 rounded mb-4">
             <h3 className="text-lg font-semibold mb-2">Riepilogo</h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
                 <p className="text-sm text-gray-600">Numero Fatture</p>
                 <p className="text-lg font-medium">{totali.numeroFatture}</p>
@@ -222,34 +267,27 @@ const GestioneFatture = () => {
                 <p className="text-sm text-gray-600">Totale Fatturato</p>
                 <p className="text-lg font-medium">€ {totali.totale.toLocaleString()}</p>
               </div>
+              <div>
+                <p className="text-sm text-gray-600">Totale pagamenti in attesa</p>
+                <p className="text-lg font-medium text-orange-600">
+                  € {totali.daPagare.toLocaleString()}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Pagameti ricevuti</p>
+                <p className="text-lg font-medium text-green-600">
+                  € {totali.pagate.toLocaleString()}
+                </p>
+              </div>
             </div>
           </div>
 
           <h3 className="text-lg font-semibold mb-4">Fatture Registrate</h3>
-          <div className="space-y-2">
-            {fattureSalvate.map((fattura) => (
-              <div key={fattura.id} className="flex items-center justify-between p-4 bg-gray-50 rounded">
-                <div>
-                  <div className="flex items-baseline space-x-2">
-                    <p className="font-medium">€ {parseFloat(fattura.fatturato).toLocaleString()}</p>
-                    <p className="text-sm text-gray-500">{new Date(fattura.dataEmissione).toLocaleDateString()}</p>
-                  </div>
-                  <p className="text-sm text-gray-600">
-                    Codice ATECO: {fattura.codiceAteco} ({fattura.coefficienteRedditività}%)
-                  </p>
-                  {fattura.descrizione && (
-                    <p className="text-sm text-gray-600">{fattura.descrizione}</p>
-                  )}
-                </div>
-                <button
-                  onClick={() => rimuoviFattura(fattura.id)}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  Rimuovi
-                </button>
-              </div>
-            ))}
-          </div>
+          <FattureMensili 
+            fatture={fattureSalvate}
+            onTogglePagamento={togglePagamento}
+            onRimuoviFattura={rimuoviFattura}
+          />
         </div>
       )}
     </div>
