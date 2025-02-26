@@ -1,5 +1,5 @@
-// src/components/AssistenteAI.jsx
 import React, { useState, useRef, useEffect } from 'react';
+import OpenAI from 'openai';
 
 const AssistenteAI = () => {
   const [input, setInput] = useState('');
@@ -8,9 +8,25 @@ const AssistenteAI = () => {
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [apiKeyValid, setApiKeyValid] = useState(true);
   const messagesEndRef = useRef(null);
   
-  const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+  // Inizializzazione del client OpenAI
+  const apiKey = import.meta.env.VITE_OPENAI_API_KEY || '';
+  
+  // Verifica che la chiave API sia presente
+  useEffect(() => {
+    if (!apiKey || apiKey.trim() === '') {
+      setApiKeyValid(false);
+      setErrorMessage('Chiave API mancante. Controlla la configurazione del file .env');
+    }
+  }, [apiKey]);
+
+  const openai = apiKey ? new OpenAI({
+    apiKey: apiKey,
+    dangerouslyAllowBrowser: true
+  }) : null;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -24,55 +40,73 @@ const AssistenteAI = () => {
     e.preventDefault();
     if (!input.trim()) return;
 
-    // user message
+    // Verifica se la chiave API è valida
+    if (!apiKeyValid || !openai) {
+      setErrorMessage('Impossibile utilizzare l\'assistente: Chiave API OpenAI non configurata o non valida.');
+      return;
+    }
+
+    // Aggiunta del messaggio dell'utente
     const userMessage = { role: 'user', content: input };
-    setMessages(prevMessages => [...prevMessages, userMessage]);
+    setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
+    setErrorMessage('');
 
     try {
-      const apiMessages = [
+      // Qui prepariamo tutti i messaggi per la chiamata API
+      const allMessages = [
         { 
           role: "system", 
-          content: "Sei un assistente commercialista specializzato nella partita iva a regime forfettario italiano. Fornisci informazioni precise e aggiornate sulla normativa fiscale, ma specifica sempre che sono consigli generali e che l'utente dovrebbe consultare un professionista per casi specifici."
+          content: "Sei un assistente commercialista specializzato nel regime forfettario italiano. Fornisci informazioni precise e aggiornate sulla normativa fiscale, ma specifica sempre che sono consigli generali e che l'utente dovrebbe consultare un professionista per casi specifici."
         },
-        ...messages,
+        ...messages.filter(msg => msg.role !== 'system'),
         userMessage
       ];
-      
-      // API OpenAI
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${OPENAI_API_KEY}`
-        },
-        body: JSON.stringify({
-          model: 'gpt-3.5-turbo',
-          messages: apiMessages,
-          temperature: 0.7,
-          max_tokens: 500
-        })
+
+      // Chiamata all'API OpenAI
+      const response = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: allMessages,
+        temperature: 0.7,
+        max_tokens: 500
       });
       
-      if (!response.ok) {
-        throw new Error(`Errore API: ${response.status}`);
-      }
+      // Estrazione della risposta dell'assistente
+      const assistantResponse = response.choices[0].message.content;
       
-      const data = await response.json();
-      const assistantResponse = data.choices[0].message.content;
-      
-      setMessages(prevMessages => [
-        ...prevMessages, 
+      // Aggiunta della risposta ai messaggi
+      setMessages(prev => [
+        ...prev, 
         { role: 'assistant', content: assistantResponse }
       ]);
     } catch (error) {
-      console.error('Errore nella comunicazione con l\'API:', error);
-      setMessages(prevMessages => [
-        ...prevMessages, 
+      console.error('Errore completo:', error);
+      
+      let errorDetails = 'Errore sconosciuto';
+      
+      if (error.response) {
+        const statusCode = error.response.status;
+        
+        if (statusCode === 429) {
+          errorDetails = 'Limite di utilizzo raggiunto. È necessario aggiornare il piano OpenAI o attendere il reset del limite.';
+          setApiKeyValid(false);
+        } else if (statusCode === 401) {
+          errorDetails = 'Chiave API non valida o scaduta. Controlla le impostazioni del tuo account OpenAI.';
+          setApiKeyValid(false);
+        } else {
+          errorDetails = `Errore API: ${statusCode}`;
+        }
+      } else if (error.message) {
+        errorDetails = `Errore di comunicazione: ${error.message}`;
+      }
+
+      setErrorMessage(errorDetails);
+      setMessages(prev => [
+        ...prev, 
         { 
           role: 'assistant', 
-          content: "Errore di comunicazione con OpenAI. Riprova più tardi o consulta un commercialista per assistenza." 
+          content: `Mi dispiace, non posso rispondere in questo momento: ${errorDetails}. Per assistenza immediata, ti consiglio di consultare un commercialista.` 
         }
       ]);
     } finally {
@@ -80,15 +114,14 @@ const AssistenteAI = () => {
     }
   };
 
-  // Chat
   return (
     <div className="fixed bottom-4 right-4 z-50">
       {/* Pulsante per aprire/chiudere la chat */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`flex items-center justify-center w-24 h-16 rounded-full shadow-lg transition-colors duration-300 ${
-          isOpen ? 'bg-red-500 text-white' : 'bg-blue-500 text-white hover:bg-blue-800'
-        }`}
+          isOpen ? 'bg-red-500 text-white' : 'bg-blue-500 text-white hover:bg-blue-600'
+        } ${!apiKeyValid ? 'opacity-50' : ''}`}
       >
         {isOpen ? (
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -115,6 +148,13 @@ const AssistenteAI = () => {
           </div>
           
           <div className="h-80 overflow-y-auto p-3 bg-gray-50">
+            {!apiKeyValid && (
+              <div className="mb-3 p-2 bg-yellow-100 text-yellow-800 rounded border border-yellow-300">
+                <p className="font-semibold">⚠️ Configurazione API incompleta</p>
+                <p className="text-sm">L'assistente AI non può funzionare correttamente con le attuali impostazioni API. Controlla la tua chiave API OpenAI.</p>
+              </div>
+            )}
+            
             {messages.map((msg, index) => (
               <div 
                 key={index} 
@@ -138,6 +178,13 @@ const AssistenteAI = () => {
                 </div>
               </div>
             )}
+            {errorMessage && (
+              <div className="text-center py-2">
+                <div className="inline-block p-2 bg-red-100 text-red-800 rounded-lg text-sm">
+                  {errorMessage}
+                </div>
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </div>
 
@@ -146,14 +193,14 @@ const AssistenteAI = () => {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Chiedi qualcosa..."
+              placeholder={apiKeyValid ? "Chiedi qualcosa..." : "Assistente non disponibile"}
               className="flex-grow p-2 text-sm border rounded-l focus:outline-none focus:ring-1 focus:ring-blue-500"
-              disabled={isLoading}
+              disabled={isLoading || !apiKeyValid}
             />
             <button
               type="submit"
               className="bg-blue-500 text-white px-3 py-2 rounded-r hover:bg-blue-600 disabled:opacity-50"
-              disabled={isLoading || !input.trim()}
+              disabled={isLoading || !input.trim() || !apiKeyValid}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
