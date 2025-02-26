@@ -7,9 +7,9 @@ const LandingPage = () => {
       <main className="flex-grow bg-gradient-to-b from-blue-500 to-blue-700 text-white">
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              TAXMATE
-            </h1>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 text-shadow-lg shadow-black/40">
+               TAXMATE
+          </h1>
             
             <p className="text-xl mb-8 text-blue-100">
               Strumento per calcolare tasse, contributi e scadenze del regime forfettario
@@ -39,15 +39,15 @@ const LandingPage = () => {
             <div className="flex justify-center space-x-4">
               <Link 
                 to="/calcola"
-                className="bg-white text-blue-600 px-8 py-4 rounded-lg text-xl font-semibold shadow-lg hover:bg-green-100 transition-colors"
+                className="bg-white text-blue-600 px-8 py-4 rounded-lg text-xl font-semibold shadow-lg hover:bg-cyan-300 transition-colors"
               >
-                Calcola Contributi
+                Anagrafica
               </Link>
               <Link 
                 to="/fatture"
                 className="bg-blue-800 text-white px-8 py-4 rounded-lg text-xl font-semibold shadow-lg hover:bg-cyan-600 transition-colors"
               >
-                Gestisci Fatture
+                Contabilità
               </Link>
             </div>
             

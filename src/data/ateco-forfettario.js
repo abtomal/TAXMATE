@@ -4,6 +4,7 @@ export const atecoData = [
     descrizione: "Minimercati ed altri esercizi non specializzati",
     categoria: "Commercio",
     coefficiente: 40,
+    tipo: "commerciante",
     note: "Vendita al dettaglio di prodotti alimentari e non"
   },
   {
@@ -11,6 +12,7 @@ export const atecoData = [
     descrizione: "Commercio al dettaglio ambulante di altri prodotti",
     categoria: "Commercio",
     coefficiente: 40,
+    tipo: "commerciante",
     note: "Include commercio ambulante di vari prodotti"
   },
   {
@@ -18,6 +20,7 @@ export const atecoData = [
     descrizione: "Commercio al dettaglio via internet",
     categoria: "Commercio",
     coefficiente: 40,
+    tipo: "commerciante",
     note: "E-commerce e vendita online"
   },
   {
@@ -25,6 +28,7 @@ export const atecoData = [
     descrizione: "Produzione di software non connesso all'edizione",
     categoria: "Servizi IT",
     coefficiente: 67,
+    tipo: "commerciante",
     note: "Sviluppo software, app e soluzioni digitali"
   },
   {
@@ -32,6 +36,7 @@ export const atecoData = [
     descrizione: "Consulenza nel settore delle tecnologie dell'informatica",
     categoria: "Servizi IT",
     coefficiente: 67,
+    tipo: "commerciante",
     note: "Consulenza IT e tecnologica"
   },
   {
@@ -39,6 +44,7 @@ export const atecoData = [
     descrizione: "Altre elaborazioni elettroniche di dati",
     categoria: "Servizi IT",
     coefficiente: 67,
+    tipo: "commerciante",
     note: "Elaborazione dati e servizi correlati"
   },
   {
@@ -46,6 +52,7 @@ export const atecoData = [
     descrizione: "Attività degli studi legali",
     categoria: "Professioni",
     coefficiente: 78,
+    tipo: "commerciante",
     note: "Avvocati e servizi legali"
   },
   {
@@ -53,6 +60,7 @@ export const atecoData = [
     descrizione: "Servizi forniti da dottori commercialisti",
     categoria: "Professioni",
     coefficiente: 78,
+    tipo: "commerciante",
     note: "Commercialisti e consulenti fiscali"
   },
   {
@@ -60,6 +68,7 @@ export const atecoData = [
     descrizione: "Attività degli studi di architettura",
     categoria: "Professioni",
     coefficiente: 78,
+    tipo: "commerciante",
     note: "Architetti e progettazione"
   },
   {
@@ -67,6 +76,7 @@ export const atecoData = [
     descrizione: "Servizi dei saloni di barbiere e parrucchiere",
     categoria: "Servizi alla persona",
     coefficiente: 67,
+    tipo: "artigiano",
     note: "Servizi di cura dei capelli"
   },
   {
@@ -74,6 +84,7 @@ export const atecoData = [
     descrizione: "Servizi degli istituti di bellezza",
     categoria: "Servizi alla persona",
     coefficiente: 67,
+    tipo: "artigiano",
     note: "Estetisti e trattamenti estetici"
   },
   {
@@ -81,6 +92,7 @@ export const atecoData = [
     descrizione: "Installazione di impianti elettrici",
     categoria: "Artigianato",
     coefficiente: 86,
+    tipo: "artigiano",
     note: "Elettricisti e impiantistica"
   },
   {
@@ -88,6 +100,7 @@ export const atecoData = [
     descrizione: "Installazione di impianti idraulici",
     categoria: "Artigianato",
     coefficiente: 86,
+    tipo: "artigiano",
     note: "Idraulici e termoidraulica"
   },
   {
@@ -95,6 +108,7 @@ export const atecoData = [
     descrizione: "Fisioterapia",
     categoria: "Sanità",
     coefficiente: 67,
+    tipo: "commerciante",
     note: "Servizi di fisioterapia e riabilitazione"
   },
   {
@@ -102,6 +116,7 @@ export const atecoData = [
     descrizione: "Altre attività paramediche indipendenti",
     categoria: "Sanità",
     coefficiente: 67,
+    tipo: "commerciante",
     note: "Include osteopati, nutrizionisti, ecc."
   },
   {
@@ -109,6 +124,7 @@ export const atecoData = [
     descrizione: "Attività di consulenza per la gestione aziendale",
     categoria: "Consulenza",
     coefficiente: 67,
+    tipo: "commerciante",
     note: "Consulenza manageriale e business"
   },
   {
@@ -116,6 +132,7 @@ export const atecoData = [
     descrizione: "Ideazione di campagne pubblicitarie",
     categoria: "Marketing",
     coefficiente: 67,
+    tipo: "commerciante",
     note: "Agenzie pubblicitarie e marketing"
   },
   {
@@ -123,6 +140,7 @@ export const atecoData = [
     descrizione: "Attività di design e moda",
     categoria: "Design",
     coefficiente: 67,
+    tipo: "commerciante",
     note: "Design di moda e industriale"
   },
   {
@@ -130,6 +148,7 @@ export const atecoData = [
     descrizione: "Costruzione di edifici residenziali e non residenziali",
     categoria: "Costruzioni",
     coefficiente: 86,
+    tipo: "artigiano",
     note: "Imprese edili e costruzioni"
   },
   {
@@ -137,6 +156,7 @@ export const atecoData = [
     descrizione: "Altri lavori di costruzione e installazione",
     categoria: "Costruzioni",
     coefficiente: 86,
+    tipo: "artigiano",
     note: "Lavori specializzati di costruzione"
   },
   {
@@ -144,6 +164,7 @@ export const atecoData = [
     descrizione: "Scuole e corsi di lingua",
     categoria: "Istruzione",
     coefficiente: 67,
+    tipo: "commerciante",
     note: "Insegnamento lingue e formazione"
   },
   {
@@ -151,6 +172,7 @@ export const atecoData = [
     descrizione: "Altri servizi di istruzione",
     categoria: "Istruzione",
     coefficiente: 67,
+    tipo: "commerciante",
     note: "Formazione e corsi vari"
   },
   {
@@ -158,6 +180,7 @@ export const atecoData = [
     descrizione: "Attività dei periti e liquidatori indipendenti",
     categoria: "Intermediazione",
     coefficiente: 62,
+    tipo: "commerciante",
     note: "Periti assicurativi e valutatori"
   },
   {
@@ -165,6 +188,7 @@ export const atecoData = [
     descrizione: "Broker di assicurazioni",
     categoria: "Intermediazione",
     coefficiente: 62,
+    tipo: "commerciante",
     note: "Intermediazione assicurativa"
   },
   {
@@ -172,6 +196,7 @@ export const atecoData = [
     descrizione: "Trasporto di merci su strada",
     categoria: "Trasporti",
     coefficiente: 67,
+    tipo: "artigiano",
     note: "Autotrasporto merci"
   },
   {
@@ -179,6 +204,7 @@ export const atecoData = [
     descrizione: "Servizi logistici relativi alla distribuzione delle merci",
     categoria: "Logistica",
     coefficiente: 67,
+    tipo: "commerciante",
     note: "Logistica e distribuzione"
   },
   {
@@ -186,19 +212,22 @@ export const atecoData = [
     descrizione: "Altre attività dei disegnatori grafici",
     categoria: "Arte e Intrattenimento",
     coefficiente: 78,
+    tipo: "commerciante",
     note: "Design, arte classica e arte digitale"
   },
   {
     codice: "90.01.09",
-    descrizione: "Altre rappresentazioni artistiche",
+    descrizione: "Altre rappresentazioni artistiche",
     categoria: "Arte e Intrattenimento",
     coefficiente: 67,
+    tipo: "commerciante",
     note: "Altre attività relative all'ambito artistico"
   },{
     codice: "96.09.09",
     descrizione: "Altri servizi per la persona nca.",
     categoria: "Generico",
     coefficiente: 67,
+    tipo: "commerciante",
     note: "Generico"
   }
 ];

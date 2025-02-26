@@ -18,10 +18,10 @@ const Navbar = () => {
       <div className="max-w-4xl mx-auto">
         {/* Versione Desktop */}
         <div className="hidden md:flex justify-between items-center">
-          <Link to="/" className="text-l">Torna alla Home</Link>
+          <Link to="/" className="text-l hover:text-blue-400 font-bold">Torna alla Home</Link>
           <div className="space-x-4">
-            <Link to="/calcola" className="hover:text-blue-200 font-bold">Calcola Contributi</Link>
-            <Link to="/fatture" className="hover:text-blue-200 font-bold">Gestisci Fatture</Link>
+            <Link to="/calcola" className="hover:text-blue-200 font-bold">Anagrafica</Link>
+            <Link to="/fatture" className="hover:text-blue-200 font-bold">Contabilità</Link>
           </div>
         </div>
 

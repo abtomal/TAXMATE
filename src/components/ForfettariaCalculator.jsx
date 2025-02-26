@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
-import CalcoloForm from './CalcoloForm';
+import CalcoloForm from './Form';
 import RisultatiCalcolo from './RisultatiCalcolo';
 import { calcolaContributiInps, verificaRequisiti } from '../utils/calcolatori';
 
 const ForfettariaCalculator = () => {
   const [formData, setFormData] = useState({
     fatturato: '',
+    fatturatoPrecedente: '',
     codiceAteco: '',
     annoApertura: new Date().getFullYear(),
     pensionato: false,
     altrePartiteIva: false,
     redditoDiLavoro: 0,
     coefficienteRedditività: 0,
-    tipologiaInps: 'commerciante'
+    tipologiaInps: 'commerciante' // Valore predefinito, verrà aggiornato quando si seleziona un codice ATECO
   });
 
   const [errors, setErrors] = useState([]);
@@ -35,7 +36,6 @@ const ForfettariaCalculator = () => {
     const redditoImponibile = fatturato * coefficiente;
     const isFirst5Years = new Date().getFullYear() - parseInt(formData.annoApertura) < 5;
     
-    // Calcola contributi INPS in base alla tipologia
     const contributiInps = calcolaContributiInps(
       redditoImponibile, 
       formData.tipologiaInps, 
@@ -73,6 +73,10 @@ const ForfettariaCalculator = () => {
         <RisultatiCalcolo 
           results={results}
           tipologiaInps={formData.tipologiaInps}
+          annoApertura={formData.annoApertura}
+          fatturatoPrecedente={formData.fatturatoPrecedente}
+          fatturato={formData.fatturato}
+          coefficienteRedditività={formData.coefficienteRedditività}
         />
       </div>
     </div>
