@@ -3,6 +3,7 @@ import { useState } from 'react';
 import ForfettariaCalculator from './components/ForfettariaCalculator';
 import GestioneFatture from './components/GestioneFatture';
 import LandingPage from './pages/LandingPage';
+import AssistenteAI from './components/AssistenteAI';
 
 // Componente Navbar separato
 const Navbar = () => {
@@ -92,6 +93,8 @@ const App = () => {
           <Route path="/calcola" element={<ForfettariaCalculator />} />
           <Route path="/fatture" element={<GestioneFatture />} />
         </Routes>
+        {/* Assistente AI flottante presente in tutte le pagine */}
+        <AssistenteAI />
       </div>
     </Router>
   );

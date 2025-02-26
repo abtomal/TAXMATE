@@ -1,4 +1,3 @@
-// src/components/ForfettariaCalculator.jsx
 import React, { useState } from 'react';
 import CalcoloForm from './CalcoloForm';
 import RisultatiCalcolo from './RisultatiCalcolo';
@@ -9,7 +8,6 @@ const ForfettariaCalculator = () => {
     fatturato: '',
     codiceAteco: '',
     annoApertura: new Date().getFullYear(),
-
     pensionato: false,
     altrePartiteIva: false,
     redditoDiLavoro: 0,
@@ -65,7 +63,6 @@ const ForfettariaCalculator = () => {
   return (
     <div className="max-w-4xl mx-auto p-4">
       <div className="bg-white rounded-lg shadow-lg p-6">
-        
         <CalcoloForm 
           formData={formData}
           setFormData={setFormData}
