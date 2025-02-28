@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { atecoData } from '../data/ateco-forfettario.js';
+import { atecoData } from './atecoData';
 import { cercaCodiciAteco, getCodiceByCodice } from '../services/ateco-service.js';
 
 const AtecoSearch = ({ onSelect, selectedCode }) => {

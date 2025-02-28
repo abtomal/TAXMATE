@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { atecoData } from '../data/ateco-forfettario.js';
+import { atecoData } from '../data/atecoData';
 import { COSTANTI } from '../utils/calcolatori.js';
 
 const CalcoloForm = ({ formData, setFormData, onSubmit, errors }) => {
