@@ -5,7 +5,7 @@ import GestioneFatture from './components/GestioneFatture';
 import LandingPage from './pages/LandingPage';
 import AssistenteAI from './components/AssistenteAI';
 
-// Componente Navbar separato
+// Componente Navbar migliorato
 const Navbar = () => {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,24 +14,27 @@ const Navbar = () => {
   if (location.pathname === '/') return null;
 
   return (
-    <nav className="bg-blue-600 text-white p-4">
+    <nav className="bg-blue-600 text-white p-4 sticky top-0 z-30 shadow-md">
       <div className="max-w-4xl mx-auto">
         {/* Versione Desktop */}
         <div className="hidden md:flex justify-between items-center">
-          <Link to="/" className="text-l hover:text-blue-400 font-bold">Torna alla Home</Link>
-          <div className="space-x-4">
-            <Link to="/calcola" className="hover:text-blue-200 font-bold">Anagrafica</Link>
-            <Link to="/fatture" className="hover:text-blue-200 font-bold">Contabilità</Link>
+          <Link to="/" className="text-xl hover:text-blue-200 font-bold flex items-center">
+            <span className="mr-2">TAXMATE</span>
+          </Link>
+          <div className="space-x-6">
+            <Link to="/calcola" className="hover:text-blue-200 font-bold transition-colors duration-200">Anagrafica</Link>
+            <Link to="/fatture" className="hover:text-blue-200 font-bold transition-colors duration-200">Contabilità</Link>
           </div>
         </div>
 
         {/* Versione Mobile */}
         <div className="md:hidden">
           <div className="flex justify-between items-center">
-            <Link to="/" className="text-l">Torna alla Home</Link>
+            <Link to="/" className="text-xl font-bold">TAXMATE</Link>
             <button 
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 focus:outline-none"
+              className="p-2 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors"
+              aria-label="Menu di navigazione"
             >
               <svg 
                 className="w-6 h-6" 
@@ -58,25 +61,29 @@ const Navbar = () => {
             </button>
           </div>
 
-          {/* Menu mobile */}
-          {isMenuOpen && (
-            <div className="mt-4 space-y-2">
+          {/* Menu mobile con animazione */}
+          <div 
+            className={`mt-4 overflow-hidden transition-all duration-300 ease-in-out ${
+              isMenuOpen ? 'max-h-32 opacity-100' : 'max-h-0 opacity-0'
+            }`}
+          >
+            <div className="space-y-2 py-2">
               <Link 
                 to="/calcola" 
-                className="block py-2 px-4 hover:bg-blue-700 rounded font-bold"
+                className="block py-2 px-4 hover:bg-blue-700 rounded-lg font-bold transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Calcola Contributi
+                Anagrafica
               </Link>
               <Link 
                 to="/fatture" 
-                className="block py-2 px-4 hover:bg-blue-700 rounded font-bold"
+                className="block py-2 px-4 hover:bg-blue-700 rounded-lg font-bold transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Gestisci Fatture
+                Contabilità
               </Link>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </nav>

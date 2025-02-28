@@ -35,13 +35,6 @@ const ProiezioniContabilita = ({ fatture, codiceAteco, coefficienteRedditività,
     const coefficiente = coefficienteRedditività / 100;
     const redditoImponibile = fatturato * coefficiente;
     
-    // Determina se l'azienda è nei primi 5 anni
-    const isFirst5Years = annoCorrente - annoAperturaNum < 5;
-    
-    // Calcola l'imposta sostitutiva
-    const aliquotaImposta = isFirst5Years ? 0.05 : 0.15;
-    const impostaSostitutiva = redditoImponibile * aliquotaImposta;
-    
     // Calcola i contributi INPS
     let contributiInps = 0;
     if (tipologiaInps === 'artigiano') {
@@ -59,6 +52,16 @@ const ProiezioniContabilita = ({ fatture, codiceAteco, coefficienteRedditività,
       contributiInps = redditoImponibile * COSTANTI.ALIQUOTA_COMMERCIANTE;
     }
     
+    // CORREZIONE: Calcola l'imponibile netto (sottraendo i contributi INPS dal reddito imponibile)
+    const imponibileNetto = redditoImponibile - contributiInps;
+    
+    // Determina se l'azienda è nei primi 5 anni
+    const isFirst5Years = annoCorrente - annoAperturaNum < 5;
+    
+    // Calcola l'imposta sostitutiva sul reddito netto
+    const aliquotaImposta = isFirst5Years ? 0.05 : 0.15;
+    const impostaSostitutiva = imponibileNetto * aliquotaImposta;
+    
     // Calcola il totale dei costi
     const totaleCosti = impostaSostitutiva + contributiInps;
     
@@ -72,8 +75,9 @@ const ProiezioniContabilita = ({ fatture, codiceAteco, coefficienteRedditività,
     setResults({
       fatturato: fatturato.toFixed(2),
       redditoImponibile: redditoImponibile.toFixed(2),
-      impostaSostitutiva: impostaSostitutiva.toFixed(2),
       contributiInps: contributiInps.toFixed(2),
+      imponibileNetto: imponibileNetto.toFixed(2), // Aggiungi l'imponibile netto ai risultati
+      impostaSostitutiva: impostaSostitutiva.toFixed(2),
       totaleCosti: totaleCosti.toFixed(2),
       nettoStimato: nettoStimato.toFixed(2),
       aliquotaApplicata: (aliquotaImposta * 100),
@@ -181,6 +185,7 @@ const ProiezioniContabilita = ({ fatture, codiceAteco, coefficienteRedditività,
             <h3 className="text-lg font-semibold mb-2">Basato su</h3>
             <p>Fatturato dell'anno corrente: <span className="font-bold">€ {results.fatturato}</span></p>
             <p>Partita IVA aperta nell'anno: <span className="font-bold">{debugInfo.annoAperturaConvertito || "N/A"}</span></p>
+            <p>Imposta sostitutiva: <span className="font-bold">€ {results.impostaSostitutiva}</span></p>
           </div>
           
           {/* Sezione principale con i risultati più importanti */}
@@ -229,18 +234,32 @@ const ProiezioniContabilita = ({ fatture, codiceAteco, coefficienteRedditività,
                 <div className="p-4 bg-white rounded shadow">
                   <p className="text-sm text-gray-600">Reddito Imponibile</p>
                   <p className="text-lg font-semibold">€ {results.redditoImponibile}</p>
-                </div>
-                <div className="p-4 bg-white rounded shadow">
-                  <p className="text-sm text-gray-600">Imposta Sostitutiva ({results.aliquotaApplicata}%)</p>
-                  <p className="text-lg font-semibold">€ {results.impostaSostitutiva}</p>
+                  <p className="text-sm text-gray-500 mt-1">Fatturato × Coefficiente redditività</p>
                 </div>
                 <div className="p-4 bg-white rounded shadow">
                   <p className="text-sm text-gray-600">Contributi INPS</p>
                   <p className="text-lg font-semibold">€ {results.contributiInps}</p>
+                  <p className="text-sm text-gray-500 mt-1">{tipologiaInps === 'artigiano' ? 'Calcolo artigiani' : 'Calcolo commercianti'}</p>
+                </div>
+                <div className="p-4 bg-white rounded shadow">
+                  <p className="text-sm text-gray-600">Imponibile Netto</p>
+                  <p className="text-lg font-semibold">€ {results.imponibileNetto}</p>
+                  <p className="text-sm text-gray-500 mt-1">Reddito Imponibile - Contributi INPS</p>
+                </div>
+                <div className="p-4 bg-white rounded shadow">
+                  <p className="text-sm text-gray-600">Imposta Sostitutiva ({results.aliquotaApplicata}%)</p>
+                  <p className="text-lg font-semibold">€ {results.impostaSostitutiva}</p>
+                  <p className="text-sm text-gray-500 mt-1">Imponibile Netto × {results.aliquotaApplicata}%</p>
+                </div>
+                <div className="p-4 bg-white rounded shadow">
+                  <p className="text-sm text-gray-600">Totale Tasse e Contributi</p>
+                  <p className="text-lg font-semibold">€ {results.totaleCosti}</p>
+                  <p className="text-sm text-gray-500 mt-1">Imposta Sostitutiva + Contributi INPS</p>
                 </div>
                 <div className="p-4 bg-white rounded shadow">
                   <p className="text-sm text-gray-600">Tassazione Effettiva</p>
                   <p className="text-lg font-semibold">{results.tassazioneEffettiva}%</p>
+                  <p className="text-sm text-gray-500 mt-1">(Totale costi ÷ Fatturato) × 100</p>
                 </div>
               </div>
               

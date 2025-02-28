@@ -1,3 +1,5 @@
+import { calcolaContributiInps } from './calcolatori';
+
 export const calcolaAccontiEImposte = (fatturatoPrecedente, fatturato, coefficiente, annoApertura) => {
     const annoCorrente = new Date().getFullYear();
     
@@ -29,14 +31,20 @@ export const calcolaAccontiEImposte = (fatturatoPrecedente, fatturato, coefficie
     }
   
     // Calcola l'imposta dell'anno precedente (base per gli acconti versati)
+    // MODIFICA: Calcolo corretto includendo i contributi INPS
     const redditoImponibilePrecedente = parseFloat(fatturatoPrecedente) * (coefficiente / 100);
+    const contributiInpsPrecedenti = calcolaContributiInps(redditoImponibilePrecedente, 'commerciante', false);
+    const imponibileNettoPrecedente = redditoImponibilePrecedente - contributiInpsPrecedenti;
     const aliquotaPrecedente = isFirst5Years ? 0.05 : 0.15;
-    const impostaPrecedente = redditoImponibilePrecedente * aliquotaPrecedente;
+    const impostaPrecedente = imponibileNettoPrecedente * aliquotaPrecedente;
   
     // Calcola l'imposta effettiva dell'anno corrente
+    // MODIFICA: Calcolo corretto includendo i contributi INPS
     const redditoImponibile = parseFloat(fatturato) * (coefficiente / 100);
+    const contributiInps = calcolaContributiInps(redditoImponibile, 'commerciante', false);
+    const imponibileNetto = redditoImponibile - contributiInps;
     const aliquotaCorrente = isFirst5Years ? 0.05 : 0.15;
-    const impostaCorrente = redditoImponibile * aliquotaCorrente;
+    const impostaCorrente = imponibileNetto * aliquotaCorrente;
   
     // Se l'imposta precedente era zero, non ci sono acconti versati
     if (impostaPrecedente <= 0) {

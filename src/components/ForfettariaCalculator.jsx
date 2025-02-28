@@ -33,26 +33,40 @@ const ForfettariaCalculator = () => {
     const fatturato = parseFloat(formData.fatturato);
     const coefficiente = formData.coefficienteRedditività / 100;
     
+    // Calcolo del reddito imponibile lordo
     const redditoImponibile = fatturato * coefficiente;
-    const isFirst5Years = new Date().getFullYear() - parseInt(formData.annoApertura) < 5;
     
+    // Calcolo dei contributi INPS
     const contributiInps = calcolaContributiInps(
       redditoImponibile, 
       formData.tipologiaInps, 
       formData.pensionato
     );
     
+    // MODIFICA: Calcolo dell'imponibile netto (sottraendo i contributi INPS)
+    const imponibileNetto = redditoImponibile - contributiInps;
+    
+    // Determina se si applica l'aliquota agevolata per i primi 5 anni
+    const isFirst5Years = new Date().getFullYear() - parseInt(formData.annoApertura) < 5;
     const aliquotaImposta = isFirst5Years ? 0.05 : 0.15;
-    const impostaSostitutiva = redditoImponibile * aliquotaImposta;
+    
+    // MODIFICA: Calcolo dell'imposta sostitutiva sull'imponibile netto
+    const impostaSostitutiva = imponibileNetto * aliquotaImposta;
+    
+    // Calcolo del totale costi
     const totaleCosti = impostaSostitutiva + contributiInps;
+    
+    // Calcolo del netto stimato
     const nettoStimato = fatturato - totaleCosti;
     
+    // Calcolo della tassazione effettiva
     const tassazioneEffettiva = ((totaleCosti / fatturato) * 100).toFixed(1);
     
     setResults({
       redditoImponibile: redditoImponibile.toFixed(2),
-      impostaSostitutiva: impostaSostitutiva.toFixed(2),
       contributiInps: contributiInps.toFixed(2),
+      imponibileNetto: imponibileNetto.toFixed(2), // Aggiungiamo l'imponibile netto
+      impostaSostitutiva: impostaSostitutiva.toFixed(2),
       totaleCosti: totaleCosti.toFixed(2),
       nettoStimato: nettoStimato.toFixed(2),
       aliquotaApplicata: (aliquotaImposta * 100),
