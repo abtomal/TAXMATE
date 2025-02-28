@@ -1,34 +1,76 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { atecoData } from '../data/ateco-forfettario.js';
+import { cercaCodiciAteco, getCodiceByCodice } from '../services/ateco-service.js';
 
 const AtecoSearch = ({ onSelect, selectedCode }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isOpen, setIsOpen] = useState(false);
-
-  // Funzione di ricerca migliorata
-  const filteredAteco = useMemo(() => {
-    if (!searchTerm) return [];
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  
+  // State per il codice selezionato
+  const [selectedAteco, setSelectedAteco] = useState(null);
+  
+  // Carica il dettaglio del codice selezionato
+  useEffect(() => {
+    const loadSelectedAteco = async () => {
+      if (selectedCode) {
+        // Prima cerca nei risultati già caricati
+        const found = searchResults.find(item => item.codice === selectedCode);
+        if (found) {
+          setSelectedAteco(found);
+          return;
+        }
+        
+        // Cerca nel dataset forfettario (sincronamente)
+        const foundInData = atecoData.find(item => item.codice === selectedCode);
+        if (foundInData) {
+          setSelectedAteco(foundInData);
+          return;
+        }
+        
+        // Se non lo trova, cerca nel dataset completo
+        try {
+          const result = await getCodiceByCodice(selectedCode);
+          setSelectedAteco(result);
+        } catch (error) {
+          console.error("Errore nel caricare il codice selezionato:", error);
+        }
+      } else {
+        setSelectedAteco(null);
+      }
+    };
     
-    const searchTerms = searchTerm.toLowerCase().split(' ').filter(term => term.length > 0);
+    loadSelectedAteco();
+  }, [selectedCode, searchResults]);
+  
+  // Gestisce la ricerca
+  useEffect(() => {
+    const search = async () => {
+      if (!searchTerm || searchTerm.length < 2) {
+        setSearchResults([]);
+        return;
+      }
+      
+      setIsLoading(true);
+      
+      try {
+        const results = await cercaCodiciAteco(searchTerm, 10);
+        setSearchResults(results);
+      } catch (error) {
+        console.error("Errore nella ricerca:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     
-    return atecoData.filter(ateco => {
-      const searchString = `${ateco.codice} ${ateco.descrizione} ${ateco.categoria}`.toLowerCase();
-      
-      // Tutti i termini di ricerca devono essere presenti
-      return searchTerms.every(term => searchString.includes(term));
-    }).sort((a, b) => {
-      // Prioritizza i risultati che iniziano con il termine di ricerca
-      const aStartsWithCode = a.codice.toLowerCase().startsWith(searchTerm.toLowerCase());
-      const bStartsWithCode = b.codice.toLowerCase().startsWith(searchTerm.toLowerCase());
-      
-      if (aStartsWithCode && !bStartsWithCode) return -1;
-      if (!aStartsWithCode && bStartsWithCode) return 1;
-      
-      return 0;
-    }).slice(0, 10); // Limita a 10 risultati per performance
+    // Debounce
+    const timer = setTimeout(() => {
+      search();
+    }, 300);
+    
+    return () => clearTimeout(timer);
   }, [searchTerm]);
-
-  const selectedAteco = atecoData.find(a => a.codice === selectedCode);
 
   return (
     <div className="relative">
@@ -73,9 +115,9 @@ const AtecoSearch = ({ onSelect, selectedCode }) => {
       </div>
 
       {/* Lista risultati */}
-      {isOpen && searchTerm && filteredAteco.length > 0 && (
+      {isOpen && searchTerm && searchResults.length > 0 && (
         <div className="absolute z-10 w-full mt-1 bg-white border rounded-lg shadow-lg max-h-96 overflow-y-auto">
-          {filteredAteco.map((ateco) => (
+          {searchResults.map((ateco) => (
             <button
               key={ateco.codice}
               type="button"
@@ -110,8 +152,21 @@ const AtecoSearch = ({ onSelect, selectedCode }) => {
         </div>
       )}
 
+      {/* Stato di caricamento */}
+      {isLoading && (
+        <div className="absolute z-10 w-full mt-1 bg-white border rounded-lg shadow-lg p-4 text-center text-gray-500">
+          <div className="flex justify-center items-center space-x-2">
+            <svg className="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>Ricerca in corso...</span>
+          </div>
+        </div>
+      )}
+
       {/* Nessun risultato */}
-      {isOpen && searchTerm && filteredAteco.length === 0 && (
+      {isOpen && searchTerm && !isLoading && searchResults.length === 0 && (
         <div className="absolute z-10 w-full mt-1 bg-white border rounded-lg shadow-lg p-4 text-center text-gray-500">
           <svg className="w-6 h-6 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
