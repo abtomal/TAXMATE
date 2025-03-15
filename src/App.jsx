@@ -1,7 +1,7 @@
 import { HashRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import ForfettariaCalculator from './components/ForfettariaCalculator';
-import GestioneFatture from './components/GestioneFatture';
+import GestioneFatture from './components/gestioneFatture/GestioneFatture';
 import LandingPage from './pages/LandingPage';
 import AssistenteAI from './components/AssistenteAI';
 

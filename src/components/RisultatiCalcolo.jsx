@@ -3,7 +3,34 @@ import React, { useState } from 'react';
 import { COSTANTI } from '../utils/calcolatori';
 import { calcolaAccontiEImposte } from '../utils/calcolo-saldo-imposte';
 
-const RisultatiCalcolo = ({ results, tipologiaInps, annoApertura, fatturatoPrecedente, fatturato, coefficienteRedditività }) => {
+// Componente CalendarDate responsivo e ottimizzato
+const CalendarDate = ({ month, day, label }) => {
+  return (
+    <div className="flex flex-col items-center mx-auto">
+      {/* Dimensioni ridotte su mobile, normali su desktop */}
+      <div className="w-12 h-16 sm:w-16 sm:h-20 bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
+        <div className="bg-green-600 text-white text-xs font-bold py-1 text-center uppercase">
+          {month}
+        </div>
+        <div className="flex items-center justify-center h-10 sm:h-14">
+          <span className="text-2xl sm:text-3xl font-bold text-green-800">{day}</span>
+        </div>
+      </div>
+      <p className="text-xs sm:text-sm text-gray-700 mt-1 sm:mt-2 font-medium text-center w-full">{label}</p>
+    </div>
+  );
+};
+
+const RisultatiCalcolo = ({ 
+  results, 
+  tipologiaInps, 
+  annoApertura, 
+  dataApertura, 
+  fatturatoPrecedente, 
+  fatturato, 
+  coefficienteRedditività, 
+  limiteFatturato 
+}) => {
   const [mostraDettagli, setMostraDettagli] = useState(false);
   
   if (!results) return null;
@@ -101,22 +128,18 @@ const RisultatiCalcolo = ({ results, tipologiaInps, annoApertura, fatturatoPrece
     }
   };
 
-  // Stato acconti anno successivo
-  const getStatoAccontiAnnoSuccessivo = () => {
-    if (!infoAcconti.deveCalcolareAcconti) {
-      return "Nessun acconto da versare per l'anno successivo.";
-    } else if (infoAcconti.unicaRata) {
-      return <><span className="font-bold">€ {infoAcconti.importoTotale.toFixed(2)}</span> in unica soluzione entro il 30 novembre.</>;
-    } else {
-      return <><span className="font-bold">€ {infoAcconti.importoTotale.toFixed(2)}</span> in due rate: <span className="font-bold">€ {infoAcconti.importoPrimaRata.toFixed(2)}</span> entro il 30 giugno e <span className="font-bold">€ {infoAcconti.importoSecondaRata.toFixed(2)}</span> entro il 30 novembre.</>;
-    }
-  };
-
   return (
     <div className="mt-8 space-y-6">
       <div className="bg-gradient-to-br from-blue-500 to-blue-700 text-white p-4 rounded-lg shadow-md">
         <h3 className="text-xl font-bold mb-2 text-center">Risultati del calcolo</h3>
         <p className="text-sm text-center text-blue-100 mb-4">Dati aggiornati al {new Date().getFullYear()}</p>
+        
+        {/* Aggiungi info sul limite se è diverso da 85.000€ */}
+        {limiteFatturato !== 85000 && (
+          <p className="text-sm text-center text-blue-100">
+            Limite fatturato calcolato in base alla data di apertura: {limiteFatturato.toLocaleString()}€
+          </p>
+        )}
       </div>
       
       {/* Sezione principale con i risultati più importanti */}
@@ -148,38 +171,74 @@ const RisultatiCalcolo = ({ results, tipologiaInps, annoApertura, fatturatoPrece
         </div>
       </div>
       
-      {/* Sezione informazioni sugli acconti */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        {/* Acconti anno successivo */}
-        <div className="p-5 bg-amber-50 rounded-lg shadow-md border border-amber-200">
-          <div className="flex items-start mb-3">
-            <div className="bg-amber-200 p-2 rounded-lg mr-3">
-              <svg className="w-5 h-5 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
+      {/* Sezione acconti per l'anno successivo con visualizzazione calendario */}
+      {/* Sezione acconti per l'anno successivo con visualizzazione calendario */}
+{infoAcconti.deveCalcolareAcconti && (
+  <div className="p-4 sm:p-5 bg-amber-50 rounded-lg shadow-md border border-amber-200">
+    <h4 className="text-base sm:text-lg font-semibold text-amber-800 mb-3 sm:mb-4 flex items-center">
+      <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+      Scadenze acconti anno successivo
+    </h4>
+    
+    {/* Container con centratura */}
+    <div className="flex justify-center">
+      {/* Wrapper con scorrimento orizzontale per mobile */}
+      <div className="overflow-x-auto pb-2 w-full">
+        <div className="flex justify-center sm:justify-start gap-4 sm:gap-6 min-w-max sm:min-w-0">
+          {infoAcconti.unicaRata ? (
+            <div className="flex justify-center w-full sm:justify-start">
+              <CalendarDate 
+                month="Nov" 
+                day="30" 
+                label={`Rata unica: €${infoAcconti.importoUnicaRata.toFixed(2)}`} 
+              />
             </div>
-            <h4 className="text-md font-semibold text-amber-800">Acconti per l'anno successivo</h4>
-          </div>
-          <p className="text-sm mt-2 text-amber-700">{getStatoAccontiAnnoSuccessivo()}</p>
-        </div>
-        
-        {/* Situazione acconti anno corrente */}
-        <div className="p-5 bg-blue-50 rounded-lg shadow-md border border-blue-200">
-          <div className="flex items-start mb-3">
-            <div className="bg-blue-200 p-2 rounded-lg mr-3">
-              <svg className="w-5 h-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
+          ) : (
+            <div className="flex justify-center w-full sm:justify-start gap-4 sm:gap-6">
+              <CalendarDate 
+                month="Giu" 
+                day="30" 
+                label={`Prima rata: €${infoAcconti.importoPrimaRata.toFixed(2)}`} 
+              />
+              <CalendarDate 
+                month="Nov" 
+                day="30" 
+                label={`Seconda rata: €${infoAcconti.importoSecondaRata.toFixed(2)}`} 
+              />
             </div>
-            <h4 className="text-md font-semibold text-blue-800">Acconti già versati</h4>
-          </div>
-          <p className="text-sm mt-2 text-blue-700">{getStatoAccontiMessaggio()}</p>
-          {infoAccontiVersati.haAccontiVersati && (
-            <p className="text-sm mt-1 text-blue-700">
-              Acconti versati: <span className="font-bold">€ {infoAccontiVersati.importoAccontiVersati.toFixed(2)}</span>
-            </p>
           )}
         </div>
+      </div>
+    </div>
+    
+    <div className="mt-3 p-2 sm:p-3 bg-amber-100 rounded-lg text-xs sm:text-sm text-amber-800">
+      <p>
+        {infoAcconti.unicaRata 
+          ? `L'acconto di €${infoAcconti.importoTotale.toFixed(2)} va versato in un'unica soluzione entro il 30 novembre.` 
+          : `L'acconto totale di €${infoAcconti.importoTotale.toFixed(2)} va versato in due rate: €${infoAcconti.importoPrimaRata.toFixed(2)} entro il 30 giugno e €${infoAcconti.importoSecondaRata.toFixed(2)} entro il 30 novembre.`}
+      </p>
+    </div>
+  </div>
+)}
+      
+      {/* Sezione situazione acconti anno corrente */}
+      <div className="p-5 bg-blue-50 rounded-lg shadow-md border border-blue-200">
+        <div className="flex items-start mb-3">
+          <div className="bg-blue-200 p-2 rounded-lg mr-3">
+            <svg className="w-5 h-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+          </div>
+          <h4 className="text-md font-semibold text-blue-800">Acconti già versati</h4>
+        </div>
+        <p className="text-sm mt-2 text-blue-700">{getStatoAccontiMessaggio()}</p>
+        {infoAccontiVersati.haAccontiVersati && (
+          <p className="text-sm mt-1 text-blue-700">
+            Acconti versati: <span className="font-bold">€ {infoAccontiVersati.importoAccontiVersati.toFixed(2)}</span>
+          </p>
+        )}
       </div>
       
       {/* Pulsante per mostrare/nascondere i dettagli */}
@@ -203,7 +262,7 @@ const RisultatiCalcolo = ({ results, tipologiaInps, annoApertura, fatturatoPrece
       {mostraDettagli && (
         <div className="mt-6 p-5 bg-gray-50 rounded-lg border border-gray-200">
           <h4 className="text-lg font-semibold mb-4 flex items-center">
-            <svg className="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
             Dettaglio calcoli
@@ -226,7 +285,7 @@ const RisultatiCalcolo = ({ results, tipologiaInps, annoApertura, fatturatoPrece
             </div>
             <div className="p-4 bg-white rounded-lg shadow">
               <p className="text-sm text-gray-600">Imponibile Netto</p>
-              <p className="text-lg font-semibold">€ {(parseFloat(results.redditoImponibile) - parseFloat(results.contributiInps)).toFixed(2)}</p>
+              <p className="text-lg font-semibold">€ {results.imponibileNetto}</p>
               <p className="text-xs text-gray-500 mt-1">
                 Reddito Imponibile - Contributi INPS
               </p>
@@ -253,6 +312,17 @@ const RisultatiCalcolo = ({ results, tipologiaInps, annoApertura, fatturatoPrece
               </p>
             </div>
           </div>
+          
+          {/* Informazione sul limite di fatturato calcolato */}
+          {limiteFatturato !== 85000 && (
+            <div className="p-4 bg-white rounded-lg shadow mb-6">
+              <p className="text-sm text-gray-600">Limite di Fatturato Calcolato</p>
+              <p className="text-lg font-semibold">€ {limiteFatturato.toLocaleString()}</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Calcolato in base alla data di apertura ({new Date(dataApertura).toLocaleDateString()})
+              </p>
+            </div>
+          )}
           
           {/* Dettaglio acconti già versati */}
           {infoAccontiVersati.haAccontiVersati && (
@@ -368,22 +438,42 @@ const RisultatiCalcolo = ({ results, tipologiaInps, annoApertura, fatturatoPrece
                 </svg>
                 Scadenze Contributi Fissi
               </h5>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 bg-white rounded-lg shadow">
-                  <p className="text-sm text-gray-600">1° Trimestre (16/05)</p>
-                  <p className="text-lg font-semibold">€ {COSTANTI.QUOTA_FISSA_TRIMESTRALE_ARTIGIANO.toFixed(2)}</p>
-                </div>
-                <div className="p-3 bg-white rounded-lg shadow">
-                  <p className="text-sm text-gray-600">2° Trimestre (22/08)</p>
-                  <p className="text-lg font-semibold">€ {COSTANTI.QUOTA_FISSA_TRIMESTRALE_ARTIGIANO.toFixed(2)}</p>
-                </div>
-                <div className="p-3 bg-white rounded-lg shadow">
-                  <p className="text-sm text-gray-600">3° Trimestre (16/11)</p>
-                  <p className="text-lg font-semibold">€ {COSTANTI.QUOTA_FISSA_TRIMESTRALE_ARTIGIANO.toFixed(2)}</p>
-                </div>
-                <div className="p-3 bg-white rounded-lg shadow">
-                  <p className="text-sm text-gray-600">4° Trimestre (16/02)</p>
-                  <p className="text-lg font-semibold">€ {COSTANTI.QUOTA_FISSA_TRIMESTRALE_ARTIGIANO.toFixed(2)}</p>
+              
+              {/* Contenitore con scorrimento orizzontale per mobile */}
+              <div className="overflow-x-auto pb-2">
+                <div className="flex justify-center md:justify-start gap-4 md:gap-6 min-w-max">
+                  <div className="p-3 bg-white rounded shadow flex flex-col items-center">
+                    <CalendarDate 
+                      month="Mag" 
+                      day="16" 
+                      label="1° Trimestre" 
+                    />
+                    <p className="text-xs sm:text-sm text-gray-600 mt-2">€ {COSTANTI.QUOTA_FISSA_TRIMESTRALE_ARTIGIANO.toFixed(2)}</p>
+                  </div>
+                  <div className="p-3 bg-white rounded shadow flex flex-col items-center">
+                    <CalendarDate 
+                      month="Ago" 
+                      day="22" 
+                      label="2° Trimestre" 
+                    />
+                    <p className="text-xs sm:text-sm text-gray-600 mt-2">€ {COSTANTI.QUOTA_FISSA_TRIMESTRALE_ARTIGIANO.toFixed(2)}</p>
+                  </div>
+                  <div className="p-3 bg-white rounded shadow flex flex-col items-center">
+                    <CalendarDate 
+                      month="Nov" 
+                      day="16" 
+                      label="3° Trimestre" 
+                    />
+                    <p className="text-xs sm:text-sm text-gray-600 mt-2">€ {COSTANTI.QUOTA_FISSA_TRIMESTRALE_ARTIGIANO.toFixed(2)}</p>
+                  </div>
+                  <div className="p-3 bg-white rounded shadow flex flex-col items-center">
+                    <CalendarDate 
+                      month="Feb" 
+                      day="16" 
+                      label="4° Trimestre" 
+                    />
+                    <p className="text-xs sm:text-sm text-gray-600 mt-2">€ {COSTANTI.QUOTA_FISSA_TRIMESTRALE_ARTIGIANO.toFixed(2)}</p>
+                  </div>
                 </div>
               </div>
             </div>

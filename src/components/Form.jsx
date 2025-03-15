@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { atecoData } from '../data/atecoData';
 import { COSTANTI } from '../utils/calcolatori.js';
 
-const CalcoloForm = ({ formData, setFormData, onSubmit, errors }) => {
+const CalcoloForm = ({ formData, setFormData, onSubmit, errors, limiteFatturato }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [filteredAteco, setFilteredAteco] = useState([]);
@@ -45,6 +45,15 @@ const CalcoloForm = ({ formData, setFormData, onSubmit, errors }) => {
     return selectedAteco.tipo === 'artigiano' ? "Artigiano" : "Commerciante";
   };
 
+  const handleDataAperturaChange = (e) => {
+    const data = new Date(e.target.value);
+    setFormData({
+      ...formData, 
+      dataApertura: e.target.value,
+      annoApertura: data.getFullYear() // Aggiorna automaticamente l'anno
+    });
+  };
+
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4 text-center md:text-left">Calcolatore Partita IVA Forfettaria</h1>
@@ -71,16 +80,16 @@ const CalcoloForm = ({ formData, setFormData, onSubmit, errors }) => {
                   value={formData.fatturato}
                   onChange={(e) => setFormData({...formData, fatturato: e.target.value})}
                   className="w-full p-2 pl-8 pr-4 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  max={COSTANTI.LIMITE_FATTURATO}
+                  max={limiteFatturato}
                   required
                 />
               </div>
-              <p className="mt-1 text-xs text-gray-500">Limite: {COSTANTI.LIMITE_FATTURATO.toLocaleString()}€</p>
+              <p className="mt-1 text-xs text-gray-500">Limite: {limiteFatturato.toLocaleString()}€</p>
             </div>
 
             <div>
               <label className="block text-sm font-medium mb-1 text-gray-700">
-                Anno di apertura
+                Data di apertura
               </label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
@@ -89,15 +98,17 @@ const CalcoloForm = ({ formData, setFormData, onSubmit, errors }) => {
                   </svg>
                 </span>
                 <input
-                  type="number"
-                  value={formData.annoApertura}
-                  onChange={(e) => setFormData({...formData, annoApertura: e.target.value})}
-                  className="w-full p-2 pl-8 pr-4 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  min="1900"
-                  max={new Date().getFullYear()}
+                  type="date"
+                  value={formData.dataApertura}
+                  onChange={handleDataAperturaChange}
+                  className="w-full p-2 pl-8 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  max={new Date().toISOString().split('T')[0]}
                   required
                 />
               </div>
+              <p className="text-xs text-gray-500 mt-1">
+                L'anno di apertura ({formData.annoApertura}) viene estratto automaticamente
+              </p>
             </div>
           </div>
         </div>
