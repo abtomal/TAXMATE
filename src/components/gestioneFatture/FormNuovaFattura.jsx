@@ -43,40 +43,44 @@ const FormNuovaFattura = ({
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-700">
-              Data Emissione
-            </label>
-            <div className="relative">
-              <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
-                <Calendar className="w-4 h-4" />
-              </span>
-              <input
-                type="date"
-                value={formData.dataEmissione}
-                onChange={(e) => setFormData({...formData, dataEmissione: e.target.value})}
-                className="w-full p-2 pl-8 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              />
+              <label className="block text-sm font-medium mb-1 text-gray-700">
+                Data Emissione
+              </label>
+              <div className="relative">
+                {!formData.dataEmissione && (
+                  <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                    <Calendar className="w-4 h-4" />
+                  </span>
+                )}
+                <input
+                  type="date"
+                  value={formData.dataEmissione}
+                  onChange={(e) => setFormData({...formData, dataEmissione: e.target.value})}
+                  className={`w-full p-2 ${!formData.dataEmissione ? 'pl-8' : 'pl-3'} border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                  required
+                />
+              </div>
             </div>
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1 text-gray-700">
-              Data Scadenza
-            </label>
-            <div className="relative">
-              <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
-                <Calendar className="w-4 h-4" />
-              </span>
-              <input
-                type="date"
-                value={formData.dataScadenza}
-                onChange={(e) => setFormData({...formData, dataScadenza: e.target.value})}
-                className="w-full p-2 pl-8 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              />
+            <div>
+              <label className="block text-sm font-medium mb-1 text-gray-700">
+                Data Scadenza
+              </label>
+              <div className="relative">
+                {!formData.dataScadenza && (
+                  <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                    <Calendar className="w-4 h-4" />
+                  </span>
+                )}
+                <input
+                  type="date"
+                  value={formData.dataScadenza}
+                  onChange={(e) => setFormData({...formData, dataScadenza: e.target.value})}
+                  className={`w-full p-2 ${!formData.dataScadenza ? 'pl-8' : 'pl-3'} border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                  required
+                />
+              </div>
             </div>
-          </div>
         </div>
 
         <div className="relative">
